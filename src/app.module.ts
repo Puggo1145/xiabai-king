@@ -7,6 +7,9 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { appConfigValidationSchema } from './validation/app-config.validation';
 import { createZodValidationProvider } from './utils/zod-validator-provider';
 import { UserModule } from './modules/user/user.module';
+import { AuthController } from './modules/auth/auth.controller';
+import { AuthService } from './modules/auth/auth.service';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -29,10 +32,11 @@ import { UserModule } from './modules/user/user.module';
         uri: process.env.MONGODB_URI || 'mongodb://localhost:27017/nonsense-king',
       }),
     }),
-    UserModule
+    UserModule,
+    AuthModule
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 
 export class AppModule {}

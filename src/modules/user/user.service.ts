@@ -2,10 +2,10 @@ import { User, UserDocument } from '@/models/user.model';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserOnlineStatusDto } from './dto/update-user-online-status.dto';
-import { UpdateUserRoomDto } from './dto/update-user-room.dto';
-import { UpdateGameStatsDto } from './dto/update-game-stats.dto';
+import { CreateUserParams } from './dto/create-user.dto';
+import { UpdateUserOnlineStatusParams } from './dto/update-user-online-status.dto';
+import { UpdateUserRoomParams } from './dto/update-user-room.dto';
+import { UpdateGameStatsParams } from './dto/update-game-stats.dto';
 
 @Injectable()
 export class UserService {
@@ -22,13 +22,13 @@ export class UserService {
         return this.userModel.findOne({ openid }).exec();
     }
 
-    async createUser(createUserDto: CreateUserDto): Promise<UserDocument> {
-        const user = new this.userModel(createUserDto);
+    async createUser(createUserParams: CreateUserParams): Promise<UserDocument> {
+        const user = new this.userModel(createUserParams);
         await user.save();
         return user;
     }
 
-    async updateUserOnlineStatus({ openid, isOnline }: UpdateUserOnlineStatusDto): Promise<UserDocument | null> {
+    async updateUserOnlineStatus({ openid, isOnline }: UpdateUserOnlineStatusParams): Promise<UserDocument | null> {
         return this.userModel.findOneAndUpdate(
             { openid },
             {
@@ -39,7 +39,7 @@ export class UserService {
         ).exec();
     }
 
-    async updateUserRoom({ openid, currentRoomId }: UpdateUserRoomDto): Promise<UserDocument | null> {
+    async updateUserRoom({ openid, currentRoomId }: UpdateUserRoomParams): Promise<UserDocument | null> {
         return this.userModel.findByIdAndUpdate(
             { openid },
             { currentRoomId },
@@ -50,7 +50,7 @@ export class UserService {
     async updateGameStats({
         openid,
         won
-    }: UpdateGameStatsDto): Promise<UserDocument | null> {
+    }: UpdateGameStatsParams): Promise<UserDocument | null> {
         // 增加基础统计信息，游戏场次和相应角色场次
         const update = {
             $inc: {

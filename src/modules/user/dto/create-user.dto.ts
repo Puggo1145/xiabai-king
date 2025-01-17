@@ -1,6 +1,7 @@
 import { IsString, IsOptional, IsUrl, IsNotEmpty } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 import { UserOpenidDto } from "./base-user.dto";
+import type { DtoType } from '@/types/dto-type';
 import type { UserDocument } from "@/models/user.model";
 
 export class CreateUserDto extends UserOpenidDto {
@@ -14,3 +15,5 @@ export class CreateUserDto extends UserOpenidDto {
     @IsUrl()
     readonly avatarUrl?: UserDocument['avatarUrl'];
 }
+
+export type CreateUserParams = DtoType<CreateUserDto>
