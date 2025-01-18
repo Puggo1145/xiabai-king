@@ -6,8 +6,8 @@ import type { DtoType } from "@/types/dto-type";
 
 export class UpdateUserRoomDto extends UserOpenidDto {
     @ApiProperty({ description: '用户当前所在房间 id' })
-    @IsString()
-    @IsNotEmpty()
+    @IsString({ message: 'currentRoomId 格式错误' })
+    @IsNotEmpty({ message: 'currentRoomId 不能为空' })
     readonly currentRoomId: UserDocument['currentRoomId']
 }
 

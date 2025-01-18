@@ -15,13 +15,13 @@ export class TransformInterceptor<T> implements NestInterceptor<T, IResponse<T>>
       map((data: T) => {
         if (data === null) {
           return {
-            code: '0',
+            code: 0,
             success: true,
           };
         }
-        
+
         return {
-          code: '0',
+          code: 0,
           success: true,
           data,
         };

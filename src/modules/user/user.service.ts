@@ -1,5 +1,5 @@
 import { User, UserDocument } from '@/models/user.model';
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateUserParams } from './dto/create-user.dto';
@@ -22,14 +22,22 @@ export class UserService {
         return this.userModel.findOne({ openid }).exec();
     }
 
-    async createUser(createUserParams: CreateUserParams): Promise<UserDocument> {
+    /**
+     * @description 创建用户
+     * @param createUserParams 创建用户参数
+     */
+    async createUser(createUserParams: CreateUserParams): Promise<void> {
         const user = new this.userModel(createUserParams);
         await user.save();
-        return user;
     }
 
-    async updateUserOnlineStatus({ openid, isOnline }: UpdateUserOnlineStatusParams): Promise<UserDocument | null> {
-        return this.userModel.findOneAndUpdate(
+    /**
+     * @description 更新用户在线状态
+     * @param openid 微信openid
+     * @param isOnline 是否在线
+     */
+    async updateUserOnlineStatus({ openid, isOnline }: UpdateUserOnlineStatusParams): Promise<void> {
+        const res = await this.userModel.findOneAndUpdate(
             { openid },
             {
                 isOnline,
@@ -37,20 +45,38 @@ export class UserService {
             },
             { new: true }
         ).exec();
+
+        if (!res) {
+            throw new BadRequestException('User not found');
+        }
     }
 
-    async updateUserRoom({ openid, currentRoomId }: UpdateUserRoomParams): Promise<UserDocument | null> {
-        return this.userModel.findByIdAndUpdate(
+    /**
+     * @description 更新用户房间
+     * @param openid 微信openid
+     * @param currentRoomId 当前房间id
+     */
+    async updateUserRoom({ openid, currentRoomId }: UpdateUserRoomParams): Promise<void> {
+        const res = await this.userModel.findOneAndUpdate(
             { openid },
             { currentRoomId },
             { new: true }
         ).exec();
+
+        if (!res) {
+            throw new BadRequestException('User not found');
+        }
     }
 
+    /**
+     * @description 更新用户游戏统计信息
+     * @param openid 微信openid
+     * @param won 是否获胜
+     */
     async updateGameStats({
         openid,
         won
-    }: UpdateGameStatsParams): Promise<UserDocument | null> {
+    }: UpdateGameStatsParams): Promise<void> {
         // 增加基础统计信息，游戏场次和相应角色场次
         const update = {
             $inc: {
@@ -62,11 +88,15 @@ export class UserService {
             Object.assign(update.$inc, { totalWins: 1 });
         }
 
-        return this.userModel.findOneAndUpdate(
+        const res = await this.userModel.findOneAndUpdate(
             { openid },
             update,
             { new: true }
         ).exec();
+
+        if (!res) {
+            throw new BadRequestException('User not found');
+        }
     }
 }
 

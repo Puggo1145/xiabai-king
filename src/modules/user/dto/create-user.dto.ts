@@ -6,8 +6,8 @@ import type { UserDocument } from "@/models/user.model";
 
 export class CreateUserDto extends UserOpenidDto {
     @ApiProperty({ description: '用户名' })
-    @IsString()
-    @IsNotEmpty()
+    @IsString({ message: '用户名格式错误' })
+    @IsNotEmpty({ message: '用户名不能为空' })
     readonly username: UserDocument['username'];
 
     @ApiProperty({ description: '头像 URL', required: false })
